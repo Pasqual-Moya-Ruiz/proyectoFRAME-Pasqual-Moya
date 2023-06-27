@@ -1,0 +1,163 @@
+body {
+    font-family: 'Overpass', sans-serif;
+    font-weight: normal;
+    font-size: 2vw;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    color:#fcff30;;
+    
+    margin: 0;
+    background: rgba(157,157,157,1);
+    
+}
+
+#contenedor {
+    top: 500px;
+    display: flex;
+    align-items: left;
+    justify-content: left;
+    
+    
+    margin-left: 10vw;
+    margin-right: 10vw;
+    padding: 0;
+    min-width: 100%;
+    min-height: 90vh;
+    
+    width: 100vw;
+    height: 100%;
+
+    color:red;
+    flex-direction: row;
+    
+}
+
+.half {
+    flex: 1;
+  }
+
+  
+
+
+
+
+#central {
+    position:auto;
+    top: 10vh;
+    
+    width: 40vw;
+    left: center;
+    color:#fcff30;
+    
+    
+}
+
+
+
+#label{
+    font-size: 5vw;
+    color:#e01f1f;
+
+}
+
+#contenedor label{
+    font-size: 2vw;
+    color:#000000;
+    background-color: aliceblue;
+    color: red;
+    
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    
+    border-radius: 3px 3px 3px 3px;
+    -moz-border-radius: 3px 3px 3px 3px;
+    -webkit-border-radius: 3px 3px 3px 3px;
+
+    top:0px;
+
+    
+
+
+
+}
+
+#contenedor input{
+    font-size: 1.5vw;
+    border-radius: 3px 3px 3px 3px;
+    -moz-border-radius: 3px 3px 3px 3px;
+    -webkit-border-radius: 3px 3px 3px 3px;
+}
+
+#contenedor select{
+    font-size: 1.5vw;
+    border-radius: 3px 3px 3px 3px;
+    -moz-border-radius: 3px 3px 3px 3px;
+    -webkit-border-radius: 3px 3px 3px 3px;
+}
+
+span{
+    color: black;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+
+
+.band-header {
+    text-align: center;
+    font-size: 3.5vw;
+    font-style: oblique;
+    background-color: #333;
+
+    
+  }
+
+
+
+
+
+
+
+  .vertical-bands {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: #f2f2f2;
+    
+  }
+  
+  .vertical-bands::before,
+  .vertical-bands::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 10vw;
+    background-color: #333;
+    background: linear-gradient(180deg, rgba(51,51,51,1) 0%, rgba(157,157,157,1) 100%);
+    flex-direction: column;
+  }
+  
+  .vertical-bands::before {
+    left: 0;
+  }
+  
+  .vertical-bands::after {
+    right: 0;
+  }
+  
+
+
+  .circul3{
+    height: 7.5vw;
+    width: 7.5vw;
+    position: relative;
+    
+    
+    
+    background-color: red;
+    border-radius: 50%;
+    }
+
+    img{
+        position:fixed;
+        top:4.25vw;
+        right:10vw;
+    }

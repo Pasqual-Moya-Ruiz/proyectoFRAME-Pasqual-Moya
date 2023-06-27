@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="cinematic.png" type="image/png" />
+  <link rel="stylesheet" href="css.css">
+  <title>Cinematic</title>
+</head>
+<body>
+  <div class="band-header">Cinematic</div>
+  <div class="vertical-bands">
+   
+    
+    
+
+
+  
+  
+    
+  <div id="contenedor">
+    
+    <div class="half">
+
+  <label  for="dirs">Directores:</label>
+  <input id="dirs" list="list_dirs" name="director" />
+  <datalist id="list_dirs" ></datalist>
+
+  <br>
+  <div>
+  <label for="pelis">Películas:</label>
+  <select id="pelis" oninput="actualizar_cartel(this.selectedIndex)"></select>
+  </div>
+  <br>
+
+  <div>
+    <label  for="plot1">Plot:</label>
+    <label  for="plot2"><span id="plot"></span></label>
+    
+    </div>
+    <br>
+
+    <div>
+      <label  for="gen1">Genres:</label>
+      <label  for="gen2"><span id="genres"></span></label>
+      
+      </div>
+      <br>
+
+      <div>
+        <label  for="cast1">Cast:</label>
+        <label  for="cast2"><span id="cast"></span></label>
+        
+        </div>
+        <br>
+
+
+    <div>
+      <label  for="rele1">Released:</label>
+      <label  for="rele2"><span id="released"></span></label>
+      
+      </div>
+      <br>
+  
+    <div>
+    <label  for="imdb1">IMDb:</label>
+    <label  for="imdb2"><span id="imdb"></span></label>
+
+    </div>
+
+    <div>
+    <label  for="tomaV1">Rotten Tomatoes Viewers:</label>
+    <label  for="tomaV2"><span id="tomatoesV"></span></label>
+
+    </div>
+    
+
+    </div>
+
+  <div class="half">
+
+  <img id="cartel" width="400" src="cinematic.png">
+</div>
+
+  <script>
+
+  // Control del cajetín del nombre de director
+  // Solo cuando se seleccione uno de los directores del datalist, se piden sus películas
+  document.getElementById("dirs")
+    .addEventListener("input", function(event){
+          // cualquier letra en el cajetin provoca consulta de directores y actualización del datalist
+          buscar_directores(this); 
+          if(event.inputType == "insertReplacementText" || event.inputType == null) {
+            // cuando se escoge un director del datalist, entonces se buscan sus películas
+            buscar_peliculas(this); 
+      }
+  })
+
+
+
+  // Busca todos los directores cuyo nombre encaje con la expresión regular asociada
+  // a los caracteres introducidos en el cajetín de nombre de director
+  async function buscar_directores(target) {
+    const director_incompleto = target.value; // caracteres introducidos en cajetín nombre director
+    const respuestaJSON = await pedir_directores(director_incompleto);
+    actualizar_datalist_directores(respuestaJSON);
+  }
+
+
+  // Guardará las películas recibidas de un director en variable global
+  let peliculasJSON;
+  // Dado el director escogido del datalist y copiado automáticamente en el cajetín, se piden
+  // sus películas
+  async function buscar_peliculas(target) {
+    const director = target.value; // nombre del director copiado desde el datalist al ser clicado
+    peliculasJSON = await pedir_peliculas(director);
+    console.log("numero de peliculas recibidas: ", peliculasJSON.pelis.pelis.length);
+    actualizar_selector_titulos(peliculasJSON);
+  }
+
+
+  // petición al servidor de directores, proporcionando potencialmente el nombre incompleto
+  async function pedir_directores(director_incompleto) {
+    if (director_incompleto=="") return; 
+    const URL = "directores?nombre_incompleto=" + encodeURI(director_incompleto);
+    console.log("URL: ", URL);
+    return await fetch (URL, {method: "GET"})
+        .then( respuesta =>  respuesta.json() ) 
+        .catch( error => { console.log("Error: ", error) } )
+  }   
+
+  /*************************************************************/
+  // petición al servidor de las película de un director.
+  async function pedir_peliculas(director) {
+    const URL = "peliculas?director=" + encodeURI(director);
+    console.log("URL: ", URL);
+    return await fetch (URL, {method: "GET"})
+      .then(respuesta => respuesta.json() )
+      .catch( error => {console.log("Error: ", error); } )
+  }
+  /*************************************************************/
+
+
+
+  /*  A partir de respuestaJSON se extrae la lista de directores posibles
+      que encajan con lo escrito en el cajetín interpretado como una
+      expresión regular.
+      Con la lista se rellena a su vez una lista de elementos <option>
+      que cuelgan del <datalist id="list_dirs"...>; el atributo value
+      de cada uno de ellos es el nombre de uno de los directores
+  */
+  function actualizar_datalist_directores(respuestaJSON){
+
+    /* Vacía el contenido del <datalist> */
+    document.getElementById("list_dirs").innerHTML = "";
+    
+
+    // Rellenado con elementos <option value=<NOMBRE_DIRECTOR> ... >
+    console.log("Numero de directores recibidos:", respuestaJSON.directores.length)  
+    for (i=0; i<respuestaJSON.directores.length; i++) {
+      const option = document.createElement("option");
+      option.setAttribute("value", respuestaJSON.directores[i])
+      document.getElementById("list_dirs").appendChild(option);    
+    }
+    if (respuestaJSON.directores.length==0) {
+      actualizar_cartel(-1);
+    }
+  }
+
+
+  // Actualiza el selector de títulos de películas cuando se selecciona un director del datalist
+  function actualizar_selector_titulos(peliculasJSON) {
+    // Vacía la lista de peliculas del director
+    document.getElementById("pelis").innerHTML = "";
+    console.log("*******************++");
+    // Creacion de elementos <option> que cuelgan del <select id="pelis">  
+    for (i=0; i<peliculasJSON.pelis.pelis.length; i++) {
+      const opcion = document.createElement("option");
+      opcion.innerHTML = peliculasJSON.pelis.pelis[i].title;
+      plot.innerHTML = peliculasJSON.pelis.pelis[0].plot;
+      cast.innerHTML = peliculasJSON.pelis.pelis[0].cast;
+      imdb.innerHTML = peliculasJSON.pelis.pelis[0].imdb.rating;
+      tomatoesV.innerHTML = peliculasJSON.pelis.pelis[0].tomatoes.viewer.rating;
+      opcion.setAttribute("value", i); // valor de cada opción: índice
+      document.getElementById("pelis").appendChild(opcion);
+      if (i==0) { // el primero: el candidato
+        document.getElementById("pelis").setAttribute("value", peliculasJSON.pelis.pelis[i].title);
+       
+
+        actualizar_cartel(i)
+      }          
+    }
+    if (peliculasJSON.pelis.pelis.length==0) actualizar_cartel(-1); // no se pintará ningún cartel
+  }
+  fecha = peliculasJSON.pelis.pelis[i].released.split('T')[0];
+
+  // Actualiza el cartel en función de la película escogida (su índice dentro de la lista de
+  // películas recibidas)
+  function actualizar_cartel(i) {
+    if (i==-1) { // No se pinta nada: no hay nada que pintar
+      document.getElementById("pelis").innerHTML="";
+      document.getElementById("pelis").setAttribute("value", "");
+      document.getElementById("cartel").setAttribute("width","400");
+      document.getElementById("cartel").setAttribute("src","cinematic.png");
+      
+    } else { // se pinta el dibujo dada en la URL .poster
+      document.getElementById("cartel").setAttribute("width","400");
+      document.getElementById("cartel").setAttribute("src", peliculasJSON.pelis.pelis[i].poster)
+      plot.innerHTML = peliculasJSON.pelis.pelis[i].plot;
+      genres.innerHTML = peliculasJSON.pelis.pelis[i].genres;
+      //fecha = peliculasJSON.pelis.pelis[i].released.split('T')[0];
+      //released.innerHTML = fecha;
+      cast.innerHTML = peliculasJSON.pelis.pelis[i].cast;
+      released.innerHTML = peliculasJSON.pelis.pelis[i].released;
+      imdb.innerHTML = peliculasJSON.pelis.pelis[i].imdb.rating;
+      tomatoesV.innerHTML = peliculasJSON.pelis.pelis[i].tomatoes.viewer.rating;
+      
+    }
+  }
+
+</script>
+    
+
+</div>
+</div>
+
+</body>
+</html>
