@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const fileServerMiddleware = express.static('public');
+const fileServerMiddleware = express.static('servidor/public');
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
